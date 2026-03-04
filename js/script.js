@@ -158,7 +158,7 @@
       const el = document.createElement('div');
       el.className = 'resultItem';
 
-      const label = (r.diff === 4) ? 'Time Trial' : `Težavnost ${r.diff}`;
+      const label = `Težavnost ${r.diff}`;
 
       el.innerHTML = `
         <div class="diff">${label}</div>
@@ -333,7 +333,7 @@
         saveResults(arr);
         renderResults();
 
-        const label = (difficulty === 4) ? 'Time Trial' : `težavnost ${difficulty}`;
+       const label = `Težavnost ${difficulty}`;
 
         popup({
           icon: 'success',
