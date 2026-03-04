@@ -1,0 +1,254 @@
+:root{
+  --mc-red:#c8102e;
+  --mc-red-dark:#8f0d21;
+  --mc-yellow:#ffc72c;
+  --mc-yellow-dark:#d3a116;
+  --mc-cream:#fff4d6;
+  --mc-dark:#222;
+
+  --radius:18px;
+  --border:3px;
+  --gap:16px;
+}
+
+*{ box-sizing:border-box; }
+html, body { height:100%; }
+
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  color: var(--mc-dark);
+  background: var(--mc-red);
+
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+
+  padding: 18px;
+}
+
+/* ====== GLAVNI OKVIR ====== */
+.outer{
+  width: min(1100px, 100%);
+  /* NE reži vsebine – raje scroll, da gumbi niso odrezani */
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+
+  background: var(--mc-cream);
+  border: 4px solid var(--mc-yellow);
+  border-radius: calc(var(--radius) + 6px);
+  padding: 18px;
+
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+
+/* ====== NASLOV ====== */
+.header{
+  text-align:center;
+  font-weight:900;
+  font-size: clamp(22px, 2.2vw, 30px);
+  color: var(--mc-red);
+  background: var(--mc-yellow);
+  border-radius: 14px;
+  padding: 12px 10px;
+}
+
+/* ====== ČAS + TEŽAVNOST ====== */
+.time-row{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.diff-wrap{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+}
+
+/* ====== GLAVNA POSTAVITEV ====== */
+.main{
+  display:grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--gap);
+  align-items:stretch;
+}
+
+/* Levi del (maze + bottom buttons) */
+.left-side{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+
+/* ====== MAZE OKVIR ====== */
+.maze{
+  flex: 1;
+  background: var(--mc-cream);
+  
+  padding: 0;
+  overflow: hidden;
+  display: block;
+
+  aspect-ratio: 1 / 1;   /* ← KLJUČNO: vedno kvadrat */
+  width: 100%;
+}
+#mazeSvg{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* če želiš malo debelejše linije */
+#walls line{
+  stroke:#f5b000;
+  stroke-width:3.5;
+  stroke-linecap:square;
+}
+
+/* ====== DESNI PANEL ====== */
+.results{
+  border: 3px solid var(--mc-yellow);
+  background:#fff;
+  border-radius: 18px;
+  padding: 12px;
+
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.right-actions{
+  margin-top:auto;
+}
+.results-title{
+  font-weight: 900;
+  color: var(--mc-red);
+  font-size: 20px;
+}
+
+#results{
+  border-top: 2px dashed var(--mc-yellow);
+  padding-top: 10px;
+
+  overflow:auto;
+  min-height: 120px;
+}
+
+.resultItem{
+  padding: 8px 6px;
+  border-bottom: 1px solid #eee;
+  font-weight: 700;
+}
+.resultItem:last-child{ border-bottom:none; }
+.resultItem.empty{ opacity:0.75; }
+
+.right-actions{
+  display:flex;
+  gap: 10px;
+  flex-wrap:wrap;
+}
+
+/* ====== SPODNJA VRSTICA: gumbi ====== */
+.bottom-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 12px;
+  flex-wrap:wrap;
+}
+
+.buttons{
+  display:flex;
+  gap: 10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+/* ====== BUTTONI ====== */
+button{
+  padding: 10px 16px;
+  border:none;
+  border-radius: 999px;
+  background: var(--mc-red);
+  color:#fff;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  cursor:pointer;
+
+  box-shadow: 0 6px 0 var(--mc-red-dark);
+  transition: transform .08s ease, box-shadow .08s ease, filter .08s ease;
+}
+
+button:hover{ filter: brightness(1.05); }
+
+button:active{
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 var(--mc-red-dark);
+}
+
+/* Difficulty “krogi” */
+.btn{
+  padding: 8px 12px;
+  min-width: 40px;
+  text-align:center;
+}
+
+.btn.active{
+  background: var(--mc-yellow);
+  color: var(--mc-red);
+  box-shadow: 0 6px 0 var(--mc-yellow-dark);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 950px){
+  body{ padding: 12px; }
+
+  .outer{
+    padding: 12px;
+    max-height: calc(100vh - 24px);
+  }
+
+  .main{
+    grid-template-columns: 1fr 240px;
+  }
+}
+
+/* Telefon */
+@media (max-width: 650px){
+  .main{
+    grid-template-columns: 1fr;
+  }
+
+  /* panel gre pod maze */
+  .results{ order: 2; }
+
+  .time-row{
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  /* gumbi naj bodo večji in v stolpec */
+  .bottom-row{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buttons, .right-actions{
+    justify-content: stretch;
+  }
+
+  button{
+    width: 100%;
+    text-align:center;
+  }
+
+  /* difficulty gumbi naj ostanejo “chip” in ne full width */
+  .diff-wrap button.btn{
+    width:auto;
+  }
+}
