@@ -141,30 +141,42 @@
   }
 
   function renderResults() {
-    const arr = loadResults();
-    resultsEl.innerHTML = '';
+  const arr = loadResults();
+  resultsEl.innerHTML = '';
 
-    if (!arr.length) {
-      const empty = document.createElement('div');
-      empty.className = 'resultItem empty';
-      empty.textContent = 'Ni ti uspelo priti do konca.';
-      resultsEl.appendChild(empty);
-      return;
-    }
-
-    for (const r of arr) {
-      const el = document.createElement('div');
-      el.className = 'resultItem';
-
-      const label = `Težavnost ${r.diff}`;
-
-      el.innerHTML = `
-        <div class="diff">${label}</div>
-        <div>Čas: <b>${r.time}</b></div>
-      `;
-      resultsEl.appendChild(el);
-    }
+  if (!arr.length) {
+    resultsEl.innerHTML = `
+      <div class="results-table">
+        <div class="results-head">
+          <div>Ime</div>
+          <div>Težavnost</div>
+          <div>Čas</div>
+        </div>
+        <div class="results-empty">Ni rezultatov.</div>
+      </div>
+    `;
+    return;
   }
+
+  const rows = arr.map(r => `
+    <div class="results-row">
+      <div>${r.name || '-'}</div>
+      <div>${r.diff}</div>
+      <div>${r.time}</div>
+    </div>
+  `).join('');
+
+  resultsEl.innerHTML = `
+    <div class="results-table">
+      <div class="results-head">
+        <div>Ime</div>
+        <div>Težavnost</div>
+        <div>Čas</div>
+      </div>
+      ${rows}
+    </div>
+  `;
+}
 
   function applyDifficulty(d) {
     if (!DIFF[d]) return;
@@ -312,27 +324,61 @@
     if (moved) {
       setPlayer(x, y);
 
-      if (insideFinish(x, y)) {
-        gameLocked = true;
+     if (insideFinish(x, y)) {
+  gameLocked = true;
 
-        const usedMs = elapsedActiveMs(now);
-        const timeStr = fmtTime(usedMs);
+  const usedMs = elapsedActiveMs(now);
+  const timeStr = fmtTime(usedMs);
 
-        const entry = { diff: difficulty, time: timeStr, ts: Date.now() };
-        const arr = loadResults();
-        arr.unshift(entry);
-        saveResults(arr);
-        renderResults();
+  const saveWin = (playerName) => {
+    const entry = {
+      name: (playerName || 'Brez imena').trim(),
+      diff: difficulty,
+      time: timeStr,
+      ts: Date.now()
+    };
 
-        const label = `Težavnost ${difficulty}`;
+    const arr = loadResults();
+    arr.unshift(entry);
+    saveResults(arr);
+    renderResults();
+  };
 
-        popup({
-          icon: 'success',
-          title: 'Bravo!',
-          text: `Čas: ${timeStr} (${label})`,
-          confirmButtonText: 'Super'
-        }).then(() => resetGame());
+  if (window.Swal && typeof window.Swal.fire === 'function') {
+    Swal.fire({
+      icon: 'success',
+      title: 'Bravo!',
+      html: `
+        <div style="text-align:left;">
+          <div><b>Težavnost:</b> ${difficulty}</div>
+          <div><b>Čas:</b> ${timeStr}</div>
+        </div>
+      `,
+      input: 'text',
+      inputLabel: 'Vnesi svoje ime',
+      inputPlaceholder: 'Npr. Janez',
+      inputAttributes: {
+        maxlength: 8
+      },
+      confirmButtonText: 'Shrani rezultat',
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (!value || !value.trim()) {
+          return 'Vnesi ime.';
+        }
       }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveWin(result.value);
+        resetGame();
+      }
+    });
+  } else {
+    const playerName = prompt(`Bravo!\nTežavnost: ${difficulty}\nČas: ${timeStr}\n\nVnesi svoje ime:`) || 'Brez imena';
+    saveWin(playerName);
+    resetGame();
+  }
+}
     }
   }
 
