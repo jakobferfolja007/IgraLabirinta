@@ -9,7 +9,7 @@
   const wallsGroup = document.querySelector('#walls');
   const player = document.querySelector('#player');
   const finishZone = document.querySelector('#finishZone');
-
+  
   if (!svg || !wallsGroup || !player || !finishZone) {
     console.error('Manjka SVG element (mazeSvg / walls / player / finishZone). Preveri HTML.');
     return;
@@ -29,9 +29,10 @@
   const DIFF = {
     1: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: null },
     2: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 3 * 60 * 1000 },
-    3: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 3.5 * 60 * 1000 },
-    4: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 4 * 60 * 1000 },
+    3: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 2.5 * 60 * 1000 },
+    4: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 2 * 60 * 1000 },
   };
+  const SOLUTION_PENALTY_MS = 10 * 1000;
 
   let difficulty = 1;
   let speed = DIFF[difficulty].speed;
@@ -233,30 +234,53 @@
   }
 
   function toggleSolutionPath() {
-    const existing = svg.querySelector('#solutionPath');
-    if (existing) {
-      existing.remove();
-      if (solutionBtn) solutionBtn.textContent = 'Prikaži rešitev';
-      resetGame();
-      return;
+  const existing = svg.querySelector('#solutionPath');
+
+  if (existing) {
+    existing.remove();
+    if (solutionBtn) solutionBtn.textContent = 'Prikaži rešitev';
+
+    paused = false;
+    if (startedAt !== null && pauseStartedAt !== null) {
+      pausedTotalMs += (performance.now() - pauseStartedAt);
+      pauseStartedAt = null;
     }
-
-    const ns = 'http://www.w3.org/2000/svg';
-    const poly = document.createElementNS(ns, 'polyline');
-    poly.setAttribute('id', 'solutionPath');
-    poly.setAttribute('points', SOLUTION_POINTS);
-    poly.setAttribute('fill', 'none');
-    poly.setAttribute('stroke', '#ff0000');
-    poly.setAttribute('stroke-width', '2');
-    poly.setAttribute('stroke-linecap', 'square');
-    poly.setAttribute('stroke-linejoin', 'round');
-    poly.setAttribute('pointer-events', 'none');
-
-    svg.insertBefore(poly, player);
-
-    if (solutionBtn) solutionBtn.textContent = 'Od začetka';
-    animateDraw(poly, 8000);
+    return;
   }
+
+  const now = performance.now();
+
+  // če igra še ni začeta, jo začnemo, da se kazen lahko prišteje
+  if (startedAt === null) {
+    startedAt = now;
+    pausedTotalMs = 0;
+    pauseStartedAt = null;
+  }
+
+  // kazen 10 sekund
+  startedAt -= SOLUTION_PENALTY_MS;
+
+  // blokada premikanja med prikazom rešitve
+  paused = true;
+  pauseStartedAt = now;
+  keys.clear();
+
+  const ns = 'http://www.w3.org/2000/svg';
+  const poly = document.createElementNS(ns, 'polyline');
+  poly.setAttribute('id', 'solutionPath');
+  poly.setAttribute('points', SOLUTION_POINTS);
+  poly.setAttribute('fill', 'none');
+  poly.setAttribute('stroke', '#ff0000');
+  poly.setAttribute('stroke-width', '2');
+  poly.setAttribute('stroke-linecap', 'square');
+  poly.setAttribute('stroke-linejoin', 'round');
+  poly.setAttribute('pointer-events', 'none');
+
+  svg.insertBefore(poly, player);
+
+  if (solutionBtn) solutionBtn.textContent = 'Skrij rešitev';
+  animateDraw(poly, 8000);
+}
 
   if (solutionBtn) solutionBtn.addEventListener('click', toggleSolutionPath);
 
@@ -441,8 +465,8 @@
         <b>Težavnost:</b><br>
         • 1 – Time Trial (brez limita)<br>
         • 2 – 3:00 (limit)<br>
-        • 3 – 3:30 (limit)<br>
-        • 4 – 4:00 (limit)<br><br>
+        • 3 – 2:30 (limit)<br>
+        • 4 – 2:00 (limit)<br><br>
 
         Cilj: priti do izhoda.
       `,
