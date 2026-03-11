@@ -59,18 +59,33 @@ body{
 .time-row{
   display:flex;
   align-items:center;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   gap: 10px;
   font-size: 14px;
   font-weight: 800;
+}
+
+.time-row > span:first-child{
+  flex-shrink: 0;
+}
+
+#time{
+  display:inline-block;
+  width: 72px;
+  min-width: 72px;
+  text-align: left;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .diff-wrap{
   display:inline-flex;
   align-items:center;
   gap: 6px;
+  flex-shrink: 0;
+  margin-left: 8px;
 }
-
 /* ====== GLAVNA POSTAVITEV ====== */
 .main{
   display:grid;
@@ -202,6 +217,42 @@ button:active{
   background: var(--mc-yellow);
   color: var(--mc-red);
   box-shadow: 0 6px 0 var(--mc-yellow-dark);
+}
+
+/* ====== SWEETALERT ====== */
+
+.swal2-popup{
+  border-radius:18px !important;
+  border:4px solid var(--mc-yellow) !important;
+  background:var(--mc-cream) !important;
+  font-family:Arial, sans-serif !important;
+}
+
+.swal2-title{
+  color:var(--mc-red) !important;
+  font-weight:900 !important;
+}
+
+.swal2-html-container{
+  text-align:left !important;
+  line-height:1.6;
+}
+
+/* gumb */
+.swal2-confirm{
+  background:var(--mc-red) !important;
+  color:#fff !important;
+  border-radius:999px !important;
+  font-weight:900 !important;
+  padding:10px 20px !important;
+
+  box-shadow:0 6px 0 var(--mc-red-dark) !important;
+  transition:transform .08s ease, box-shadow .08s ease;
+}
+
+.swal2-confirm:active{
+  transform:translateY(3px);
+  box-shadow:0 3px 0 var(--mc-red-dark) !important;
 }
 
 /* ====== RESPONSIVE ====== */

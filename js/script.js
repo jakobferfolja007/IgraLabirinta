@@ -3,6 +3,8 @@
 // Pop-upi: SweetAlert2 (Swal.fire)
 
 (async function init() {
+
+
   const svg = document.querySelector('#mazeSvg');
   const wallsGroup = document.querySelector('#walls');
   const player = document.querySelector('#player');
@@ -25,11 +27,11 @@
   const VIEW = { w: 484, h: 484 };
 
   const DIFF = {
-  1: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: null },          // ✅ TIME TRIAL
-  2: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 3 * 60 * 1000 }, // 3:00
-  3: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 3.5 * 60 * 1000 },// 3:30
-  4: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 4 * 60 * 1000 },  // 4:00
-};
+    1: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: null },
+    2: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 3 * 60 * 1000 },
+    3: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 3.5 * 60 * 1000 },
+    4: { speed: 2.0, radius: 4.0, wallPad: 0.0, timeLimitMs: 4 * 60 * 1000 },
+  };
 
   let difficulty = 1;
   let speed = DIFF[difficulty].speed;
@@ -50,7 +52,6 @@
     return Promise.resolve();
   }
 
-  // stene -> segmenti
   const segments = [...wallsGroup.querySelectorAll('line')].map(l => ({
     x1: +l.getAttribute('x1'),
     y1: +l.getAttribute('y1'),
@@ -82,7 +83,6 @@
   function collidesCircleWithWalls(x, y) {
     const r = radius + wallPad;
 
-    // ostani v viewBox
     if (x < r || x > VIEW.w - r || y < r || y > VIEW.h - r) return true;
 
     for (const s of segments) {
@@ -108,7 +108,7 @@
     const total = Math.max(0, Math.ceil(ms / 1000));
     const m = Math.floor(total / 60);
     const s = total % 60;
-    return `${m}m ${s}s`;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
   function startTimerIfNeeded(now) {
@@ -126,11 +126,9 @@
   }
 
   function timeLeftMs(now) {
-    // kličemo samo, ko timeLimitMs ni null
     return timeLimitMs - elapsedActiveMs(now);
   }
 
-  // === Rezultati: sessionStorage ===
   const STORE_KEY = 'maze_results_v2';
 
   function loadResults() {
@@ -198,13 +196,11 @@
     keys.clear();
     gameLocked = false;
 
-    // ✅ 1–3: pokaže preostali čas; 4: pokaže 0 (meri navzgor)
     if (timeEl) timeEl.textContent = (timeLimitMs === null) ? fmtTime(0) : fmtTime(timeLimitMs);
 
     hideSolutionIfAny();
   }
 
-  // === REŠITEV (animirano risanje) ===
   const SOLUTION_POINTS = `234,2 234,10 202,10 202,26 218,26 218,58 234,58 234,26 314,26 314,10 330,10 330,106 346,106 346,90 362,90 362,106 394,106 394,122 346,122 346,138 330,138 330,154 346,154 346,170 378,170 378,154 362,154 362,138 426,138 426,154 394,154 394,186 410,186 410,170 442,170 442,202 474,202 474,234 458,234 458,218 410,218 410,234 426,234 426,250 410,250 410,298 394,298 394,314 426,314 426,330 442,330 442,314 458,314 458,330 474,330 474,394 458,394 458,346 442,346 442,362 426,362 426,346 362,346 362,314 378,314 378,282 346,282 346,330 330,330 330,362 314,362 314,330 282,330 282,314 314,314 314,298 298,298 298,282 314,282 314,266 282,266 282,298 250,298 250,314 266,314 266,330 250,330 250,362 282,362 282,426 266,426 266,410 250,410 250,426 234,426 234,346 170,346 170,314 186,314 186,330 202,330 202,298 170,298 170,266 154,266 154,250 122,250 122,266 138,266 138,314 154,314 154,330 122,330 122,314 106,314 106,346 138,346 138,378 122,378 122,458 138,458 138,474 234,474 234,458 202,458 202,442 282,442 282,458 298,458 298,474 250,474 250,482`;
 
   function animateDraw(poly, durationMs = 8000) {
@@ -252,13 +248,9 @@
 
   if (solutionBtn) solutionBtn.addEventListener('click', toggleSolutionPath);
 
-  // === Glavni loop ===
   function tick(now) {
     requestAnimationFrame(tick);
 
-    // ✅ Prikaz časa:
-    // - težavnost 1–3: odštevanje
-    // - težavnost 4: šteje navzgor (porabljen čas)
     if (timeLimitMs === null) {
       const used = (startedAt === null) ? 0 : elapsedActiveMs(now);
       if (timeEl) timeEl.textContent = fmtTime(used);
@@ -269,7 +261,6 @@
 
     if (paused || gameLocked) return;
 
-    // ✅ Timeout samo za 1–3
     if (timeLimitMs !== null && startedAt !== null && timeLeftMs(now) <= 0) {
       gameLocked = true;
       popup({
@@ -333,7 +324,7 @@
         saveResults(arr);
         renderResults();
 
-       const label = `Težavnost ${difficulty}`;
+        const label = `Težavnost ${difficulty}`;
 
         popup({
           icon: 'success',
@@ -345,7 +336,6 @@
     }
   }
 
-  // difficulty buttons (.btn[data-d])
   document.querySelectorAll('.btn[data-d]').forEach(b => {
     b.addEventListener('click', () => {
       document.querySelectorAll('.btn[data-d]').forEach(x => x.classList.remove('active'));
@@ -354,7 +344,6 @@
     });
   });
 
-  // controls
   window.addEventListener('keydown', (e) => {
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
 
@@ -412,8 +401,10 @@
         Cilj: priti do izhoda.
       `,
       icon: 'info',
-      confirmButtonText: 'Razumem'
-      
+      confirmButtonText: 'Razumem',
+       customClass: {
+    htmlContainer: 'swal-left'
+  }
     });
   });
 
@@ -422,7 +413,6 @@
     renderResults();
   });
 
-  // init
   if (diffEl) diffEl.textContent = String(difficulty);
   player.setAttribute('r', radius);
   resetGame();
