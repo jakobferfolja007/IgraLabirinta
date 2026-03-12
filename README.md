@@ -12,13 +12,4 @@ Interaktivna spletna igra labirinta, kjer mora igralec najti pot skozi zapleten 
 - Tabela rezultatov
 - Enostaven in odziven uporabniški vmesnik
 
-## 📸 Predogled
 
-![Maze Preview](screenshot.png)
-
-## 🚀 Kako zagnati projekt
-
-1. Kloniraj repozitorij
-
-```bash
-git clone https://github.com/username/pot-tisocerih-zavojev.git
