@@ -232,9 +232,16 @@ button:active{
   font-weight:900 !important;
 }
 
-.swal2-html-container{
-  text-align:center !important;
-  line-height:1.6;
+.swal-left{
+  text-align: left !important;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 /* gumb */
@@ -252,6 +259,16 @@ button:active{
 .swal2-confirm:active{
   transform:translateY(3px);
   box-shadow:0 3px 0 var(--mc-red-dark) !important;
+}
+
+/* ====== ENOTEN FONT ZA CELOTEN POPUP ====== */
+.swal2-popup * {
+  font-family: inherit !important;
+}
+.swal2-title,
+.swal2-html-container,
+.swal2-confirm {
+  font-family: Arial, sans-serif !important;
 }
 /* ====== TABELA Z REZULTATI ====== */
 .results-table{
