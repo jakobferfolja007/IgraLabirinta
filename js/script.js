@@ -51,11 +51,42 @@
   let pausedTotalMs = 0;
   let gameLocked = false;
 
+  // 🔊 + 🔴 dodatno za zadnjih 10 sekund
+  let lastBeepSecond = null;
+  let blinkState = false;
+
   // ===== 4) FUNKCIJA ZA POPUP =====
   function popup(opts) {
     if (window.Swal && typeof window.Swal.fire === 'function') return window.Swal.fire(opts);
     alert((opts.title ? opts.title + '\n' : '') + (opts.text || ''));
     return Promise.resolve();
+  }
+
+  // 🔊 pisk
+  function beep() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.value = 1000;
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+
+    osc.stop(ctx.currentTime + 0.15);
+
+    osc.onended = () => {
+      if (ctx.state !== 'closed') ctx.close();
+    };
   }
 
   // ===== 5) PRETVORBA SVG STEN V SEGMENTE =====
@@ -286,6 +317,10 @@
     keys.clear();
     gameLocked = false;
 
+    lastBeepSecond = null;
+    blinkState = false;
+    if (timeEl) timeEl.style.color = '';
+
     if (timeEl) timeEl.textContent = (timeLimitMs === null) ? fmtTime(0) : fmtTime(timeLimitMs);
 
     hideSolutionIfAny();
@@ -380,6 +415,27 @@
     } else {
       const left = (startedAt === null) ? timeLimitMs : timeLeftMs(now);
       if (timeEl) timeEl.textContent = fmtTime(left);
+
+      // 🔊 + 🔴 zadnjih 10 sekund
+      if (timeLimitMs !== null && startedAt !== null) {
+        const secondsLeft = Math.ceil(left / 1000);
+
+        if (secondsLeft <= 10 && secondsLeft > 0) {
+
+          // beep 1x na sekundo
+          if (lastBeepSecond !== secondsLeft) {
+            beep();
+            lastBeepSecond = secondsLeft;
+          }
+
+          // utripanje
+          blinkState = !blinkState;
+          if (timeEl) timeEl.style.color = blinkState ? 'red' : 'black';
+
+        } else {
+          if (timeEl) timeEl.style.color = '';
+        }
+      }
     }
 
     if (paused || gameLocked) return;
