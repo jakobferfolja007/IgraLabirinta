@@ -1,6 +1,6 @@
 # 🧩 Pot tisočerih zavojev
 
-Interaktivna spletna igra labirinta, kjer mora igralec najti pot skozi kompleksen SVG labirint. Igra vključuje več težavnostnih stopenj, časovni limit, portal teleportacijo in shranjevanje rezultatov.
+Interaktivna spletna igra labirinta, kjer mora igralec najti pot skozi kompleksen  labirint. Igra vključuje več težavnostnih stopenj, časovni limit in shranjevanje rezultatov.
 
 ---
 
