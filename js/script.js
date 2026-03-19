@@ -29,10 +29,10 @@
   const VIEW = { w: 484, h: 484 };
 
   const DIFF = {
-    1: { speed: 2.0, radius: 4.0, wallPad: 1.0, timeLimitMs: null },
-    2: { speed: 2.0, radius: 4.0, wallPad: 1.0, timeLimitMs: 3 * 60 * 1000 },
-    3: { speed: 2.0, radius: 4.0, wallPad: 1.0, timeLimitMs: 2.5 * 60 * 1000 },
-    4: { speed: 2.0, radius: 4.0, wallPad: 1.0, timeLimitMs: 2 * 60 * 1000 },
+    1: { speed: 2.0, radius: 4.0, wallPad: 2.0, timeLimitMs: null },
+    2: { speed: 2.0, radius: 4.0, wallPad: 2.0, timeLimitMs: 3 * 60 * 1000 },
+    3: { speed: 2.0, radius: 4.0, wallPad: 2.0, timeLimitMs: 2.5 * 60 * 1000 },
+    4: { speed: 2.0, radius: 4.0, wallPad: 2.0, timeLimitMs: 2 * 60 * 1000 },
   };
 
   const SOLUTION_PENALTY_MS = 10 * 1000;
