@@ -92,6 +92,6 @@ Max: 20 rezultatov
 ---
 
 
-## ✨ Avtor
+## ✨ Namen
 
 Projekt razvit kot interaktivna spletna igra za učenje in zabavo.
