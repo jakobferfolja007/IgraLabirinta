@@ -23,7 +23,7 @@ Interaktivna spletna igra labirinta, kjer mora igralec najti pot skozi komplekse
 - 🧠 Prikaz rešitve (z animacijo)
 - ⏸️ Pavza (SPACE)
 - 🔊 Zvočni efekti zadnjih 10 sekund
-- 🎨 Responsive dizajn
+
 
 ---
 
