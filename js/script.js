@@ -90,8 +90,10 @@
   }
 
   // ===== 5) PRETVORBA SVG STEN V SEGMENTE =====
-  const segments = [...wallsGroup.querySelectorAll('line')].map(l => ({
-    x1: +l.getAttribute('x1'),
+  const segments = [...wallsGroup.querySelectorAll('line')].map(l => ({ /* wallsGroup.querySelectorAll('line') isce vse <Line> elemente v wallsgroupu vrne v NodeList (kot nekaksen array);
+                                                                           ... operator Spread pretvori NodeList v JS array
+                                                                           za vsak <line> element l naredi nov objekt */
+    x1: +l.getAttribute('x1'),//iz svg bere tocke
     y1: +l.getAttribute('y1'),
     x2: +l.getAttribute('x2'),
     y2: +l.getAttribute('y2'),
@@ -120,7 +122,7 @@
     const cx = ax + t * abx;
     const cy = ay + t * aby;
 
-    return Math.hypot(px - cx, py - cy);
+    return Math.hypot(px - cx, py - cy);// razdalja med dvema tockama
   }
 
   function collidesCircleWithWalls(x, y) {
@@ -235,8 +237,11 @@
 
   function clearResults() {
     let count = localStorage.getItem('resultsCount');
-    count = count ? parseInt(count, 10) : 0;
-
+   if (count) {
+    count = parseInt(count, 10); // če obstaja, pretvori v število
+      } else {
+    count = 0; // če ne obstaja, nastavi na 0
+    }
     for (let i = 0; i < count; i++) {
       localStorage.removeItem('name_' + i);
       localStorage.removeItem('time_' + i);
@@ -336,10 +341,10 @@
   474 250,482`;
 
   function animateDraw(poly, durationMs = 8000) {
-    const len = poly.getTotalLength();
-    poly.style.strokeDasharray = `${len}`;
-    poly.style.strokeDashoffset = `${len}`;
-    poly.getBoundingClientRect();
+    const len = poly.getTotalLength();// getTotalLength() vrne dolžino celotne poti ali polilinije. Pove, koliko “poti” je za narisati.
+    poly.style.strokeDasharray = `${len}`;//Brez animacije bo to videti kot normalna črta. Celotna črta je “en dash”, ki je enako dolg kot linija.
+    poly.style.strokeDashoffset = `${len}`;//Kombinacija stroke-dasharray + stroke-dashoffset omogoča animacijo risanja linije.
+    poly.getBoundingClientRect();//prisili brskalnik, da prebere dimenzije in “naloži” stil, preden začne animacija.
 
     let start = null;
 
